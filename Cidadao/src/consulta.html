@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <title>Consulta de Protocolo</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --primary-color: #004d40;
+      --secondary-color: #e0f2f1;
+      --accent-color: #00796b;
+    }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #e8f5e9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container { 
+      max-width: 400px; 
+      width: 100%;
+      margin: 20px;
+      background: #fff; 
+      padding: 40px; 
+      border-radius: 8px; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+      border-top: 5px solid var(--primary-color);
+      text-align: center;
+    }
+    h1 { 
+      color: var(--primary-color);
+      margin-top: 0;
+    }
+    input { 
+      width: 100%; 
+      padding: 12px; 
+      margin-top: 12px; 
+      border-radius: 4px; 
+      border: 1px solid #ccc; 
+      box-sizing: border-box;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    input:focus {
+      border-color: var(--primary-color); 
+      box-shadow: 0 0 0 2px rgba(0, 77, 64, 0.2);
+      outline: none; 
+    }
+    button { 
+      width: 100%;
+      background: var(--primary-color); 
+      color: #fff; 
+      border: none; 
+      padding: 12px;
+      margin-top: 16px;
+      font-size: 1.1em;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background: var(--accent-color);
+    }
+    #resultado { 
+      margin-top:24px;
+      padding: 15px;
+      background: var(--secondary-color);
+      border-radius: 4px;
+      text-align: left;
+      line-height: 1.6;
+      display: none; /* Começa escondido */
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Consulta de Protocolo</h1>
+    <input type="text" id="protocolo" placeholder="Digite seu protocolo">
+    <button onclick="consultar()">Consultar</button>
+    <div id="resultado"></div>
+  </div>
+  <script>
+    function consultar() {
+      var protocolo = document.getElementById('protocolo').value.trim();
+      var resultadoDiv = document.getElementById('resultado');
+      if (!protocolo) {
+        resultadoDiv.style.display = 'block';
+        resultadoDiv.innerHTML = 'Por favor, digite um número de protocolo.';
+        return;
+      }
+      resultadoDiv.style.display = 'block';
+      resultadoDiv.innerHTML = 'Consultando...';
+      google.script.run.withSuccessHandler(function(resp) {
+        if (resp && resp.protocolo) {
+          resultadoDiv.innerHTML = '<b>Protocolo:</b> ' + resp.protocolo + '<br><b>Data:</b> ' + resp.data + '<br><b>Status:</b> ' + resp.status;
+        } else {
+          resultadoDiv.innerHTML = 'Protocolo não encontrado.';
+        }
+      }).consultarProtocolo(protocolo);
+    }
+    // Preenche automaticamente o campo protocolo se vier na URL
+    window.addEventListener('DOMContentLoaded', function() {
+      var urlParams = new URLSearchParams(window.location.search);
+      var protocolo = urlParams.get('protocolo');
+      if (protocolo) {
+        document.getElementById('protocolo').value = protocolo;
+      }
+    });
+  </script>
+</body>
+</html>

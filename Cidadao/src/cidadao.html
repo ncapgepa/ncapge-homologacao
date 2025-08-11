@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <title>Análise de Prescrição de Dívida Ativa</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --primary-color: #004d40; --secondary-color: #e0f2f1; --accent-color: #00796b;
+      --success-bg: #dcedc8; --success-text: #33691e; --error-bg: #ffcdd2; --error-text: #b71c1c;
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; margin: 0; padding: 20px; background: #e8f5e9; color: #333; }
+    .container { max-width: 700px; margin: 20px auto; background: #fff; padding: 20px 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-top: 5px solid var(--primary-color); }
+    h1 { color: var(--primary-color); text-align: center; font-weight: 600; }
+    h3 { color: #333; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-top: 30px;}
+    label { display: block; margin-top: 20px; font-weight: 600; font-size: 1em; color: #444; }
+    input[type="text"], input[type="email"], input[type="tel"], select, textarea, input[type="file"] { width: 100%; padding: 12px; margin-top: 8px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; transition: border-color 0.3s, box-shadow 0.3s; }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(0, 77, 64, 0.2); outline: none; }
+    .btn, .add-btn { background: #f1f1f1; color: #333; border: 1px solid #ddd; padding: 8px 12px; border-radius: 4px; cursor: pointer; transition: background 0.3s; margin-top: 10px; }
+    .btn:hover, .add-btn:hover { background: #e0e0e0; }
+    .btn-remove { background-color: #fce8e6; color: #c5221f; border-color: #f7b1ab; }
+    .termos { background: var(--secondary-color); padding: 15px; border-radius: 4px; margin-top: 24px; font-size: 0.9em; line-height: 1.5; border-left: 3px solid var(--accent-color); }
+    .submit-btn { width: 100%; background: var(--primary-color); color: #fff; border: none; padding: 15px; border-radius: 5px; margin-top: 20px; font-size: 1.1em; font-weight: 600; cursor: pointer; transition: background 0.3s; }
+    .submit-btn:hover:not(:disabled) { background: var(--accent-color); }
+    .submit-btn:disabled { background: #aaa; cursor: not-allowed; }
+    #mensagem { display: none; margin-top:20px; padding: 15px; border-radius: 5px; text-align: center; }
+    .sucesso { background-color: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-text); }
+    .erro { background-color: var(--error-bg); color: var(--error-text); border: 1px solid var(--error-text); }
+    #instrucoes { background: var(--secondary-color); padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+    .doc-item { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+    .doc-item input[type="text"] { flex-grow: 1; }
+    .form-row {
+      display: flex;
+      gap: 0;
+      align-items: flex-end;
+      margin-bottom: 0;
+    }
+    @media (max-width: 600px) {
+      .form-row { flex-direction: column; }
+      .form-row > div { margin-left: 0 !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Análise de Prescrição de Dívida Ativa</h1>
+    <div id="instrucoes"> 
+        <p><b>Tipos de Requerente e Documentos Necessários:</b></p>
+        <ul>
+            <li><b>Pessoa Física:</b> Anexar documento de identificação válido, com foto.</li>
+            <li><b>Empresário Individual:</b> Anexar cópia de documento que comprove a condição de empresário.</li>
+            <li><b>Sócio Administrador:</b> Anexar cópia do CNPJ, do contrato e alterações.</li>
+        </ul>
+        <p>Caso a solicitação seja feita por <b>Procurador</b>, além dos documentos acima, deve-se anexar a procuração com poderes específicos e cópia do RG/CPF do outorgado.</p>
+        <p>Se a pessoa for falecida é necessário, também, a certidão de óbito e termo de inventariante.</p>
+        <p><b>Sobre as CDAs:</b> Digite o(s) número(s) da(s) CDA(s) uma a uma. A prescrição ocorre após 5 anos do débito e desde que não tenha havido causa interruptiva, como parcelamento, defesa em AINF e citação válida em execução fiscal.</p>
+    </div>
+
+    <form id="form-solicitacao">
+      <h3>Identificação</h3>
+      <div>
+        <input type="checkbox" id="is-representative" name="isRepresentative" onchange="toggleRepresentativeFields()">
+        <label for="is-representative" style="display:inline; font-weight:normal;">Estou solicitando em nome de outra pessoa (sou representante legal/procurador).</label>
+      </div>
+
+      <div id="representative-fields" style="display:none; background: #fafafa; padding: 15px; border-radius: 5px; margin-top:15px;">
+        <div class="form-row">
+          <div style="flex:1; min-width:180px;">
+            <label for="nome">Seu Nome (Representante)</label>
+            <input type="text" id="nome" name="nome">
+          </div>
+          <div style="flex:1; min-width:180px; margin-left:12px;">
+            <label for="cpfCnpjRepresentado">CPF/CNPJ do Representado</label>
+            <input type="text" id="cpfCnpjRepresentado" name="cpfCnpjRepresentado" oninput="handleCpfCnpjInput(event)" required>
+          </div>
+        </div>
+        <label for="nomeRepresentado">Nome do Representado (Titular da Dívida)</label>
+        <input type="text" id="nomeRepresentado" name="nomeRepresentado">
+      </div>
+
+      <div id="self-fields">
+        <div class="form-row">
+          <div style="flex:1; min-width:180px;">
+            <label for="nome-self">Seu Nome (Titular da Dívida)</label>
+            <input type="text" id="nome-self" name="nome-self">
+          </div>
+          <div style="flex:1; min-width:180px; margin-left:12px;">
+            <label for="cpfCnpjTitular">CPF/CNPJ do Titular da Dívida</label>
+            <input type="text" id="cpfCnpjTitular" name="cpfCnpjTitular" oninput="handleCpfCnpjInput(event)" required>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div style="flex:1; min-width:180px;">
+          <label for="email">E-mail de Contato</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div style="flex:1; min-width:180px; margin-left:12px;">
+          <label for="telefone">Telefone de Contato (com DDD)</label>
+          <input type="tel" id="telefone" name="telefone" placeholder="(91) 99999-8888" required maxlength="15" oninput="handlePhoneInput(event)">
+        </div>
+      </div>
+      
+      <h3>Dados da Dívida</h3>
+      <label for="tipo-requerente" id="tipo-requerente-label">Seu Tipo de Pessoa (Titular)</label>
+      <select name="tipo" id="tipo-requerente" required onchange="atualizarCamposDocumentos()">
+        <option value="">Selecione...</option>
+        <option value="Pessoa Física">Pessoa Física</option>
+        <option value="Empresário Individual">Empresário Individual</option>
+        <option value="Sócio Administrador">Sócio Administrador</option>
+      </select>
+      
+      
+      <h3>Documentos</h3>
+      <div id="documentos-base"></div>
+      
+      <h4>Outros Documentos (Opcional)</h4>
+      <div id="documentos-outros"></div>
+      <button type="button" class="add-btn" onclick="addOtherDoc()">+ Adicionar outro documento</button>
+      
+      <label>CDAs (Certidões de Dívida Ativa)</label>
+      <div id="cda-list">
+        <input type="text" name="cda[]" required placeholder="Ex: 2009570031376-7" style="margin-bottom: 5px;" maxlength="15" oninput="handleCdaInput(event)">
+      </div>
+      <button type="button" class="add-btn" onclick="addCDA()">+ Adicionar outra CDA</button>
+
+      <div class="termos">
+        <input type="checkbox" id="aceite" name="aceite" required style="width: auto; margin-right: 8px;">
+        <label for="aceite" style="display:inline;font-weight:normal; margin-top:0;">Li e concordo com os termos abaixo.</label>
+        <p style="font-size:0.95em; margin-top:8px;"> Caso seu pedido já tenha sido levado a protesto ou à Ação de Execução Fiscal, fica ciente o contribuinte que é o responsável pelo pagamento das custas devidas.<br><br>Ao apertar no botão Enviar deste formulário, você declara estar ciente de que está fornecendo voluntariamente seus dados pessoais, incluindo, mas não se limitando a, nome, CPF, endereço e informações financeiras, à Fazenda Pública Estadual. Reconhecendo que esses dados serão utilizados exclusivamente para fins de administração tributária, fiscalização, arrecadação, e demais procedimentos relacionados à gestão fiscal do Estado.<br><br>Declara estar ciente de que seus dados serão tratados em conformidade com as disposições da Lei Geral de Proteção de Dados (Lei nº 13.709/2018) e que tem o direito de solicitar acesso, correção, limitação ou exclusão dos seus dados pessoais a qualquer momento, conforme previsto em lei, bem como dá seu consentimento livre, expresso e informado para que a Fazenda Pública Estadual processe meus dados pessoais conforme descrito acima. </p>
+      </div>
+      
+      <button type="submit" class="submit-btn" id="enviar-btn" disabled>Enviar Solicitação</button>
+    </form>
+    <div id="mensagem"></div>
+    <div id="destaque-span" style="display:none; margin-top:30px; padding:18px; background:#fff3cd; border:2px solid #ffc107; border-radius:8px; color:#856404; font-size:1.15em; text-align:center; font-weight:600; box-shadow:0 2px 8px rgba(0,0,0,0.07);">
+      <span>⚠️ <b>Atenção:</b> Para receber as informações da sua solicitação, verifique também a <u>caixa de SPAM</u> do seu e-mail. O protocolo será enviado para o endereço informado!</span>
+    </div>
+  </div>
+
+  <script>
+    let otherDocCounter = 0;
+
+    function toggleRepresentativeFields() {
+      const isChecked = document.getElementById('is-representative').checked;
+      const repFields = document.getElementById('representative-fields');
+      const selfFields = document.getElementById('self-fields');
+      const nomeSelfInput = document.getElementById('nome-self');
+      const nomeRepInput = document.getElementById('nome');
+      const nomeRepresentadoInput = document.getElementById('nomeRepresentado');
+      const cpfCnpjInput = document.getElementById('cpfCnpjRepresentado');
+      const cpfCnpjTitularInput = document.getElementById('cpfCnpjTitular');
+      const tipoLabel = document.getElementById('tipo-requerente-label');
+
+      if (isChecked) {
+        repFields.style.display = 'block';
+        selfFields.style.display = 'none';
+        nomeSelfInput.required = false;
+        nomeSelfInput.name = 'nome-self-disabled'; 
+        nomeRepInput.name = 'nome'; 
+        nomeRepInput.required = true;
+        nomeRepresentadoInput.required = true;
+        cpfCnpjInput.required = true;
+        cpfCnpjTitularInput.required = false;
+        cpfCnpjTitularInput.name = 'cpfCnpjTitular-disabled';
+        tipoLabel.textContent = "Tipo de Pessoa do Representado (Titular)";
+      } else {
+        repFields.style.display = 'none';
+        selfFields.style.display = 'block';
+        nomeSelfInput.required = true;
+        nomeSelfInput.name = 'nome'; 
+        nomeRepInput.name = 'nome-rep-disabled';
+        nomeRepInput.required = false;
+        nomeRepresentadoInput.required = false;
+        cpfCnpjInput.required = false;
+        cpfCnpjTitularInput.required = true;
+        cpfCnpjTitularInput.name = 'cpfCnpjTitular';
+        tipoLabel.textContent = "Seu Tipo de Pessoa (Titular)";
+      }
+      atualizarCamposDocumentos();
+    }
+    
+    function atualizarCamposDocumentos() {
+      const tipo = document.getElementById('tipo-requerente').value;
+      const docBaseDiv = document.getElementById('documentos-base');
+      docBaseDiv.innerHTML = ''; 
+      
+      let baseHtml = '';
+      if (tipo === 'Pessoa Física') {
+        baseHtml = '<label>Documento de identificação do titular (com foto)</label><input type="file" name="doc_id_titular" required>';
+      } else if (tipo === 'Empresário Individual') {
+        baseHtml = '<label>Documento que comprove a condição de empresário</label><input type="file" name="doc_empresario" required>';
+      } else if (tipo === 'Sócio Administrador') {
+        baseHtml = '<label>CNPJ do Representado</label><input type="file" name="doc_cnpj" required>' + 
+                   '<label>Contrato Social e Alterações</label><input type="file" name="doc_contrato" required>';
+      }
+
+      // Adiciona campos de procurador se a caixa estiver marcada
+      if (document.getElementById('is-representative').checked) {
+        baseHtml += '<hr><label>Documento de identificação do Representante</label><input type="file" name="doc_id_representante" required>' +
+                    '<label>Procuração com poderes específicos</label><input type="file" name="doc_procuracao" required>';
+      }
+      docBaseDiv.innerHTML = baseHtml;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      toggleRepresentativeFields();
+      const aceiteCheckbox = document.getElementById('aceite');
+      const enviarBtn = document.getElementById('enviar-btn');
+      aceiteCheckbox.addEventListener('change', function () {
+        enviarBtn.disabled = !this.checked;
+      });
+    });
+    
+    function addCDA() {
+      const div = document.createElement('div');
+      div.innerHTML = '<input type="text" name="cda[]" required placeholder="Ex: 2009570031376-7" style="margin-bottom: 5px;" maxlength="15" oninput="handleCdaInput(event)">';
+      document.getElementById('cda-list').appendChild(div);
+    }
+    /**
+     * NOVA FUNÇÃO: Aplica a máscara ao campo de CDA.
+     */
+    function handleCdaInput(event) {
+        let input = event.target;
+        let value = input.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+        // Aplica a máscara XXXXXXXXXXXXX-X
+        if (value.length > 13) {
+            value = value.replace(/^(\d{13})(\d{1,1})/, '$1-$2');
+        }
+        input.value = value;
+    }
+
+    function addOtherDoc() {
+      otherDocCounter++;
+      const div = document.createElement('div');
+      div.className = 'doc-item';
+      div.id = 'doc-outro-item-' + otherDocCounter;
+      div.innerHTML = `
+        <input type="text" name="desc_outro_${otherDocCounter}" placeholder="Descrição do documento (ex: Comprovante de Endereço)" required>
+        <input type="file" name="doc_outro_${otherDocCounter}" accept=".pdf,.jpg,.jpeg,.png" required>
+        <button type="button" class="btn-remove" onclick="this.parentElement.remove()">Remover</button>
+      `;
+      document.getElementById('documentos-outros').appendChild(div);
+    }
+
+    function handlePhoneInput(event) {
+      let input = event.target;
+      let value = input.value.replace(/\D/g, '');
+      value = value.replace(/^(\d{2})(\d)/, '($1) $2');
+      value = value.replace(/(\d{4,5})(\d{4})$/, '$1-$2');
+      input.value = value;
+    }
+    
+    function handleCpfCnpjInput(event) {
+        let input = event.target;
+        let value = input.value.replace(/\D/g, '');
+        if (value.length <= 11) { // CPF
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        } else { // CNPJ
+            value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+            value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+            value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+            value = value.replace(/(\d{4})(\d)/, '$1-$2');
+        }
+        input.value = value.substring(0, 18);
+    }
+
+    document.getElementById('form-solicitacao').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const submitBtn = document.getElementById('enviar-btn');
+      const mensagemDiv = document.getElementById('mensagem');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Enviando...';
+      
+      google.script.run
+        .withSuccessHandler(function(response) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Enviar Solicitação';
+          mensagemDiv.style.display = 'block';
+          if (response.protocolo) {
+            mensagemDiv.className = 'sucesso';
+            mensagemDiv.innerHTML = `<h2>Sucesso!</h2><p>Seu pedido foi enviado. Anote o seu número de protocolo para futuras consultas: <strong>${response.protocolo}</strong></p><p>O protocolo também foi enviado para o e-mail informado. Caso não encontre na caixa de entrada, verifique a caixa de spam.</p>`;
+            document.getElementById('form-solicitacao').reset();
+            toggleRepresentativeFields(); // Reseta os campos
+            document.getElementById('enviar-btn').disabled = true;
+            document.getElementById('destaque-span').style.display = 'block';
+          } else {
+            mensagemDiv.className = 'erro';
+            mensagemDiv.innerHTML = `<h2>Ocorreu um Erro</h2><p>${response.erro}</p>`;
+            document.getElementById('destaque-span').style.display = 'none';
+          }
+        })
+        .withFailureHandler(function(error) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Enviar Solicitação';
+          mensagemDiv.style.display = 'block';
+          mensagemDiv.className = 'erro';
+          mensagemDiv.innerHTML = `<h2>Ocorreu um Erro Inesperado</h2><p>${error.message}</p>`;
+          document.getElementById('destaque-span').style.display = 'none';
+        })
+        .submitForm(this); 
+    });
+  </script>
+</body>
+</html>
