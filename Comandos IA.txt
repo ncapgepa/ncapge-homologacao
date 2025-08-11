@@ -1,0 +1,37 @@
+Ao receber um comando abreviado realize a sequência de comandos descritas.
+
+- Comando: commit
+- Ação: Adiciona todos os arquivos alterados, faz commit com mensagem padrão e realiza push para o GitHub.
+- Sequência de comandos:
+  - git add .
+  - git commit -m "<<comentário>>" (<<comentário>> deve ser a descrição do que foi atualizado no sistema)
+  - git push
+
+- Comando: push <arquivo>
+- Ação: Adiciona, faz commit e push de um arquivo específico.
+- Sequência de comandos:
+  - git add <arquivo>
+  - git commit -m "Atualização de <arquivo> pelo Agent"
+  - git push
+
+- Comando: dpl-atend
+- Ação: Realiza push e deploy do módulo Atendimento no Apps Script.
+- Sequência de comandos:
+  - cd Atendimento
+  - clasp push
+  - clasp deploy --deploymentId AKfycbxOwmw_yCfIsvi5hEp5_ZT5ondud-0mYb81-7ii_u-R37QS3LDXv8BHZfk7FAlrfbom7A --description "<<comentário>>" (<<comentário>> deve ser a descrição do que foi atualizado no módulo Atendimento)
+
+- Comando: dpl-cid
+- Ação: Realiza push e deploy do módulo Cidadao no Apps Script.
+- Sequência de comandos:
+  - cd Cidadao
+  - clasp push
+  - clasp deploy --deploymentId AKfycbxvkce95ZEE84wqed5ltl1ZgkHyt4CGyPzMiq-zHJfXkHyL01X70xWU0Ot14scMd3sW --description "<<comentário>>" (<<comentário>> deve ser a descrição do que foi atualizado no módulo Cidadão)
+
+- Comando: dpl-email
+- Ação: Realiza push e deploy do módulo Email no Apps Script.
+- Sequência de comandos:
+  - cd Email
+  - clasp push
+  - clasp deploy --deploymentId AKfycbxvkce95ZEE84wqed5ltl1ZgkHyt4CGyPzMiq-zHJfXkHyL01X70xWU0Ot14scMd3sW --description "Deploy automático do Email"
+
