@@ -184,26 +184,72 @@
           <form id="edit-form">
             <h2>Detalhes do Protocolo ${protocolo}</h2>
             <input type="hidden" id="edit-protocolo" value="${protocolo}">
-            <div class="form-grid">
-              <div>
-                <label for="edit-nome">Nome do Titular / Representante Legal</label>
-                <input type="text" id="edit-nome" value="${dados.nome}">
+            <fieldset style="border:1px solid #b2dfdb; border-radius:6px; margin-bottom:20px; padding:18px;">
+              <legend style="font-weight:bold;color:#00796b;">Dados do Titular da Dívida</legend>
+              <div class="form-grid">
+                <div>
+                  <label>Nome do Titular da Dívida</label>
+                  <input type="text" id="edit-nome-representado" value="${dados.nomeRepresentado || ''}" readonly>
+                </div>
+                <div>
+                  <label>CPF/CNPJ do Titular</label>
+                  <input type="text" id="edit-cpf-cnpj-representado" value="${dados.cpfCnpjRepresentado || ''}" readonly>
+                </div>
               </div>
-              <div>
-                <label for="edit-email">E-mail</label>
-                <input type="email" id="edit-email" value="${dados.email}">
+            </fieldset>
+            <fieldset style="border:1px solid #b2dfdb; border-radius:6px; margin-bottom:20px; padding:18px;">
+              <legend style="font-weight:bold;color:#00796b;">Dados do Solicitante</legend>
+              <div class="form-grid">
+                <div>
+                  <label for="edit-nome">Nome do Solicitante</label>
+                  <input type="text" id="edit-nome" value="${dados.nome}">
+                </div>
+                <div>
+                  <label for="edit-email">E-mail</label>
+                  <input type="email" id="edit-email" value="${dados.email}">
+                </div>
+                <div>
+                  <label for="edit-telefone">Telefone</label>
+                  <input type="text" id="edit-telefone" value="${dados.telefone}" oninput="handlePhoneInput(event)" maxlength="15">
+                </div>
+                <div>
+                  <label for="edit-tipo">Tipo de Requerente</label>
+                  <select id="edit-tipo">
+                    <option>Pessoa Física</option><option>Empresário Individual</option><option>Sócio Administrador</option><option>Procurador</option>
+                  </select>
+                </div>
+                <div>
+                  <label>Tipo de Representante</label>
+                  <input type="text" id="edit-tipo-representante" value="${dados.tipoRepresentante || ''}" readonly>
+                </div>
+                <div>
+                  <label>Tipo Documento do Representante</label>
+                  <input type="text" id="edit-tipo-doc-representante" value="${dados.tipoDocumentoRepresentante || ''}" readonly>
+                </div>
+                <div>
+                  <label>Número do Documento do Representante</label>
+                  <input type="text" id="edit-num-doc-representante" value="${dados.numeroDocumentoRepresentante || ''}" readonly>
+                </div>
               </div>
-              <div>
-                <label for="edit-telefone">Telefone</label>
-                <input type="text" id="edit-telefone" value="${dados.telefone}" oninput="handlePhoneInput(event)" maxlength="15">
+            </fieldset>
+            ${(dados.tipoRepresentante || dados.tipoDocumentoRepresentante || dados.numeroDocumentoRepresentante) ? `
+            <fieldset style="border:1px solid #b2dfdb; border-radius:6px; margin-bottom:20px; padding:18px;">
+              <legend style="font-weight:bold;color:#00796b;">Dados do Representante</legend>
+              <div class="form-grid">
+                <div>
+                  <label>Tipo de Representante</label>
+                  <input type="text" id="edit-tipo-representante" value="${dados.tipoRepresentante || ''}" readonly>
+                </div>
+                <div>
+                  <label>Tipo de Documento do Representante</label>
+                  <input type="text" id="edit-tipo-doc-representante" value="${dados.tipoDocumentoRepresentante || ''}" readonly>
+                </div>
+                <div>
+                  <label>Número do Documento do Representante</label>
+                  <input type="text" id="edit-num-doc-representante" value="${dados.numeroDocumentoRepresentante || ''}" readonly>
+                </div>
               </div>
-              <div>
-                <label for="edit-tipo">Tipo de Requerente</label>
-                <select id="edit-tipo">
-                  <option>Pessoa Física</option><option>Empresário Individual</option><option>Sócio Administrador</option><option>Procurador</option>
-                </select>
-              </div>
-            </div>
+            </fieldset>` : ''}
             <label for="edit-cdas">CDAs (separadas por vírgula)</label>
             <textarea id="edit-cdas" rows="3">${dados.cdas}</textarea>
             <p style="margin-top:15px;"><b>Documentos:</b> <a href="${dados.linkDocumentos}" target="_blank" rel="noopener noreferrer">Abrir Pasta de Documentos</a></p>

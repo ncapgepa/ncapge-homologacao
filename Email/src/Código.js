@@ -1,4 +1,4 @@
-const SHEET_ID = '1Cnb-tqz1b5uvaW4rK3rlGjlYW3QJGEaz9sKPXCzEcxY'; // O MESMO ID da sua planilha
+const SHEET_ID = '1k0ytrIaumadc4Dfp29i5KSdqG93RR2GXMMwBd96jXdQ'; // O MESMO ID da sua planilha
 const EMAIL_QUEUE_SHEET_NAME = 'EmailQueue';
 
 /**

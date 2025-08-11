@@ -1,7 +1,7 @@
 // ID da sua Planilha Google - VERIFIQUE SE ESTÁ CORRETO
-const SHEET_ID = '1Cnb-tqz1b5uvaW4rK3rlGjlYW3QJGEaz9sKPXCzEcxY'; 
+const SHEET_ID = '1k0ytrIaumadc4Dfp29i5KSdqG93RR2GXMMwBd96jXdQ'; 
 const REQUESTS_SHEET_NAME = 'Pedidos Prescrição';
-const DRIVE_FOLDER_NAME = 'Documentos Prescricao';
+const DRIVE_FOLDER_NAME = 'Documentos prescricao (homologacao)';
 
 /**
  * Função principal que serve as páginas públicas.
@@ -65,8 +65,21 @@ function submitForm(formObject) {
     const cdasString = submittedCDAs.join(', ');
 
     // Prepara os novos campos para a planilha
-    const nomeRepresentado = formObject.nomeRepresentado || '';
-    const cpfCnpjRepresentado = formObject.cpfCnpjRepresentado || '';
+    let nomeRepresentado = formObject.nomeRepresentado || '';
+    let cpfCnpjRepresentado = formObject.cpfCnpjRepresentado || '';
+    const tipoRepresentante = formObject.tipoRepresentante || '';
+    const tipoDocumentoRepresentante = formObject.tipoDocumentoRepresentante || '';
+    const numeroDocumentoRepresentante = formObject.numeroDocumentoRepresentante || '';
+
+    // Se não houver representante, o nomeRepresentado recebe o nome do solicitante e o CPF/CNPJ do titular vai para a coluna O
+    if (!tipoRepresentante && !tipoDocumentoRepresentante && !numeroDocumentoRepresentante) {
+      nomeRepresentado = nomeSolicitante;
+      cpfCnpjRepresentado = formObject.cpfCnpjTitular || '';
+    }
+    // Se houver representante, grava o campo do representado normalmente, mas também grava o cpfCnpjTitular na coluna O
+    else if (formObject.cpfCnpjTitular) {
+      cpfCnpjRepresentado = formObject.cpfCnpjRepresentado || formObject.cpfCnpjTitular;
+    }
     
     const newRow = [
       protocolo,                      // A
@@ -83,8 +96,11 @@ function submitForm(formObject) {
       '',                             // L (DataEncerramento)
       '',                             // M (ATTUS/SAJ) - Coluna vazia por enquanto
       nomeRepresentado,               // N
-      cpfCnpjRepresentado,            // O
-      JSON.stringify(outrosDocumentosLista) // P (Lista de outros documentos)
+      cpfCnpjRepresentado,            // O (Agora sempre recebe o CPF/CNPJ do titular, mesmo sem representante)
+      tipoRepresentante,              // P (NOVO)
+      tipoDocumentoRepresentante,     // Q (NOVO)
+      numeroDocumentoRepresentante,   // R (NOVO)
+      JSON.stringify(outrosDocumentosLista) // S (Lista de outros documentos)
     ];
     
     sheet.appendRow(newRow);
@@ -149,7 +165,7 @@ function findDuplicateCDAs(sheet, cdasToCheck) {
 function sendConfirmationEmail(protocolo, destinatario, nome) {
   const assunto = `Confirmação de Recebimento - Protocolo ${protocolo}`;
   // Adiciona o protocolo como parâmetro na URL
-  const consultaUrl = `https://script.google.com/macros/s/AKfycbxvkce95ZEE84wqed5ltl1ZgkHyt4CGyPzMiq-zHJfXkHyL01X70xWU0Ot14scMd3sW/exec?page=consulta&protocolo=${encodeURIComponent(protocolo)}`;
+  const consultaUrl = `https://script.google.com/macros/s/AKfycbzVUDExZbAyLYVQ-8CAbAg3JjKA3cQ1NVv60P3-c9F2HC8Gtvkr4wb1uxjgrf65NZF7/exec?page=consulta&protocolo=${encodeURIComponent(protocolo)}`;
   const corpo = `
     <p>Prezado(a) ${nome},</p>
     <p>A sua solicitação de Análise de Prescrição de Dívida Ativa foi recebida com sucesso.</p>

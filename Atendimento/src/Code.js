@@ -1,4 +1,4 @@
-const SHEET_ID = '1Cnb-tqz1b5uvaW4rK3rlGjlYW3QJGEaz9sKPXCzEcxY';
+const SHEET_ID = '1k0ytrIaumadc4Dfp29i5KSdqG93RR2GXMMwBd96jXdQ';
 const REQUESTS_SHEET_NAME = 'Pedidos Prescrição';
 const ACCESS_SHEET_NAME = 'Acessos';
 const EMAIL_QUEUE_SHEET_NAME = 'EmailQueue';
@@ -73,10 +73,25 @@ function consultarProtocoloCompleto(protocolo) {
   for (let i = 1; i < data.length; i++) {
     if (data[i][0] === protocolo) {
       return {
-        protocolo: data[i][0], data: data[i][1].toLocaleString(), nome: data[i][2],
-        email: data[i][3], telefone: data[i][4], tipo: data[i][5], cdas: data[i][6],
-        linkDocumentos: data[i][7], status: data[i][8], atendente: data[i][9], historico: data[i][10],
-        attusSaj: data[i][12] // NOVO: Lê da coluna M (índice 12)
+        protocolo: data[i][0],
+        data: data[i][1] ? (data[i][1].toLocaleString ? data[i][1].toLocaleString() : data[i][1]) : '',
+        nome: data[i][2],
+        email: data[i][3],
+        telefone: data[i][4],
+        tipo: data[i][5],
+        cdas: data[i][6],
+        linkDocumentos: data[i][7],
+        status: data[i][8],
+        atendente: data[i][9],
+        historico: data[i][10],
+        dataEncerramento: data[i][11],
+        attusSaj: data[i][12],
+        nomeRepresentado: data[i][13],
+        cpfCnpjRepresentado: data[i][14],
+        tipoRepresentante: data[i][15],
+        tipoDocumentoRepresentante: data[i][16],
+        numeroDocumentoRepresentante: data[i][17],
+        outrosDocumentos: data[i][18]
       };
     }
   }
@@ -335,13 +350,28 @@ function generateProtocolPdf(protocolo) {
       </head>
       <body>
         <h1>Relatório do Protocolo: ${dados.protocolo}</h1>
-        <h3>Dados do Requerente</h3>
+        <h3>Dados do Titular da Dívida</h3>
+        <table>
+          <tr><th>Nome do Titular da Dívida</th><td>${dados.nomeRepresentado || ''}</td></tr>
+          <tr><th>CPF/CNPJ do Titular</th><td>${dados.cpfCnpjRepresentado || ''}</td></tr>
+        </table>
+        <h3>Dados do Solicitante</h3>
         <table>
           <tr><th>Nome</th><td>${dados.nome}</td></tr>
           <tr><th>E-mail</th><td>${dados.email}</td></tr>
           <tr><th>Telefone</th><td>${dados.telefone}</td></tr>
           <tr><th>Tipo de Requerente</th><td>${dados.tipo}</td></tr>
+          <tr><th>Tipo de Representante</th><td>${dados.tipoRepresentante || ''}</td></tr>
+          <tr><th>Tipo Documento do Representante</th><td>${dados.tipoDocumentoRepresentante || ''}</td></tr>
+          <tr><th>Número do Documento do Representante</th><td>${dados.numeroDocumentoRepresentante || ''}</td></tr>
         </table>
+        ${(dados.tipoRepresentante || dados.tipoDocumentoRepresentante || dados.numeroDocumentoRepresentante) ? `
+        <h3>Dados do Representante</h3>
+        <table>
+          <tr><th>Tipo de Representante</th><td>${dados.tipoRepresentante || ''}</td></tr>
+          <tr><th>Tipo de Documento do Representante</th><td>${dados.tipoDocumentoRepresentante || ''}</td></tr>
+          <tr><th>Número do Documento do Representante</th><td>${dados.numeroDocumentoRepresentante || ''}</td></tr>
+        </table>` : ''}
         <h3>Dados do Pedido</h3>
         <table>
           <tr><th>Data da Solicitação</th><td>${dados.data}</td></tr>

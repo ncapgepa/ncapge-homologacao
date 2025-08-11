@@ -1,3 +1,9 @@
+# Repositório de Homologação
+
+Este repositório é destinado à homologação do projeto principal, cujo endereço é: https://github.com/ncapgepa/ncapge
+
+---
+
 # SisNCA Completo
 
 Este projeto reúne três módulos principais, cada um com funcionalidades específicas para o gerenciamento de atendimentos, integração com cidadãos e automação de e-mails via Google Apps Script.
@@ -56,24 +62,31 @@ O projeto utiliza as seguintes permissões:
 ### 3. Informações sobre a Planilha Google e a Pasta no Drive
 
 #### Estrutura da Planilha Google
-A planilha utilizada pelo sistema deve conter uma aba chamada **Pedidos Prescrição** com as seguintes colunas:
+A planilha utilizada pelo sistema deve conter uma aba chamada **Pedidos Prescrição** com as seguintes colunas (ordem obrigatória):
 
-| Coluna           | Descrição                                                                                                    | Exemplo de Conteúdo                                      |
-|------------------|-------------------------------------------------------------------------------------------------------------|----------------------------------------------------------|
-| Protocolo        | Gerado automaticamente pelo sistema. Único e não editável.                                                  | PGE-PRESC-2024-0001                                      |
-| Timestamp        | Data e hora do envio do formulário. Preenchido automaticamente.                                             | 23/06/2024 14:30:15                                      |
-| NomeSolicitante  | Nome do Titular ou Representante Legal.                                                                     | José da Silva                                            |
-| Email            | E-mail de contato.                                                                                          | jose.silva@email.com                                     |
-| Telefone         | Telefone de contato com DDD.                                                                                | (91) 99999-8888                                          |
-| TipoPessoa       | Tipo de pessoa (Pessoa Física, Empresário, Sócio, Procurador).                                              | Pessoa Física                                            |
-| CDAs             | Números das CDAs, separados por vírgula.                                                                    | 12345, 67890, 11223                                      |
-| LinkDocumentos   | Link para a pasta no Google Drive com os documentos do solicitante.                                         | https://drive.google.com/drive/folders/123xyz...         |
-| Status           | Status atual do pedido. Controlado pelo atendente.                                                          | Novo, Em Análise, Pendente, Deferido, Indeferido         |
-| AtendenteResp    | Nome do atendente que está com o caso.                                                                      | Maria Souza                                              |
-| Historico        | Registros de cada mudança de status e observações internas.                                                 | 24/06: Análise inicial. 25/06: Documentação pendente.    |
-| DataEncerramento | Data em que o status foi mudado para Deferido/Indeferido.                                                   | 30/06/2024                                               |
+| Coluna                        | Descrição                                                                                                    | Exemplo de Conteúdo                                      |
+|-------------------------------|-------------------------------------------------------------------------------------------------------------|----------------------------------------------------------|
+| Protocolo                     | Gerado automaticamente pelo sistema. Único e não editável.                                                  | PGE-PRESC-2024-0001                                      |
+| Timestamp                     | Data e hora do envio do formulário. Preenchido automaticamente.                                             | 23/06/2024 14:30:15                                      |
+| NomeSolicitante               | Nome do Titular ou Representante Legal.                                                                     | José da Silva                                            |
+| Email                         | E-mail de contato.                                                                                          | jose.silva@email.com                                     |
+| Telefone                      | Telefone de contato com DDD.                                                                                | (91) 99999-8888                                          |
+| TipoPessoa                    | Tipo de pessoa (Pessoa Física, Empresário, Sócio, Procurador).                                              | Pessoa Física                                            |
+| CDAs                          | Números das CDAs, separados por vírgula.                                                                    | 12345, 67890, 11223                                      |
+| LinkDocumentos                | Link para a pasta no Google Drive com os documentos do solicitante.                                         | https://drive.google.com/drive/folders/123xyz...         |
+| Status                        | Status atual do pedido. Controlado pelo atendente.                                                          | Novo, Em Análise, Pendente, Deferido, Indeferido         |
+| AtendenteResp                 | Nome do atendente que está com o caso.                                                                      | Maria Souza                                              |
+| Historico                     | Registros de cada mudança de status e observações internas.                                                 | 24/06: Análise inicial. 25/06: Documentação pendente.    |
+| DataEncerramento              | Data em que o status foi mudado para Deferido/Indeferido.                                                   | 30/06/2024                                               |
+| ATTUS/SAJ                     | (Reservado para integração futura)                                                                          |                                                          |
+| NomeRepresentado              | Nome do representado (titular da dívida, se houver representante).                                          | João Pereira                                             |
+| CpfCnpjRepresentado           | CPF ou CNPJ do representado (titular da dívida, se houver representante).                                  | 123.456.789-00                                           |
+| TipoRepresentante             | Tipo de representante (Advogado, Procurador, Contador).                                                     | Advogado                                                 |
+| TipoDocumentoRepresentante    | Tipo de documento do representante (RG, CPF, OAB).                                                          | OAB                                                      |
+| NumeroDocumentoRepresentante  | Número do documento do representante.                                                                       | 12345678                                                 |
+| OutrosDocumentos              | Lista em JSON dos outros documentos enviados (campo técnico, uso interno).                                 | [{"descricao":"Comprovante de Endereço",...}]         |
 
-Cada linha representa um pedido único realizado pelo Portal do Cidadão. Os campos são utilizados tanto para acompanhamento pelo solicitante quanto para gestão interna pelo atendente.
+Cada linha representa um pedido único realizado pelo Portal do Cidadão. Os campos de representante (colunas P, Q, R) só serão preenchidos se a solicitação for feita por representante legal/procurador.
 
 #### Pasta no Google Drive
 - Para cada solicitação, é criada uma pasta no Google Drive para armazenar os documentos enviados pelo solicitante.

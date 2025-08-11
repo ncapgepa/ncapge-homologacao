@@ -17,21 +17,32 @@ Ao receber um comando abreviado realize a sequência de comandos descritas.
 - Comando: dpl-atend
 - Ação: Realiza push e deploy do módulo Atendimento no Apps Script.
 - Sequência de comandos:
-  - cd Atendimento
-  - clasp push
-  - clasp deploy --deploymentId AKfycbxOwmw_yCfIsvi5hEp5_ZT5ondud-0mYb81-7ii_u-R37QS3LDXv8BHZfk7FAlrfbom7A --description "<<comentário>>" (<<comentário>> deve ser a descrição do que foi atualizado no módulo Atendimento)
+  cd Atendimento ; clasp push ; clasp deploy --deploymentId AKfycbyjHfu_JThCljCgGYNOMn38cO4OwBNcBgEiWlQnMMLV29uao5FSsSTXUr-kc1B8ed9j --description "<<comentário>>" (<<comentário>> deve ser a descrição do que foi atualizado no módulo Atendimento) ; cd..
 
 - Comando: dpl-cid
 - Ação: Realiza push e deploy do módulo Cidadao no Apps Script.
 - Sequência de comandos:
-  - cd Cidadao
-  - clasp push
-  - clasp deploy --deploymentId AKfycbxvkce95ZEE84wqed5ltl1ZgkHyt4CGyPzMiq-zHJfXkHyL01X70xWU0Ot14scMd3sW --description "<<comentário>>" (<<comentário>> deve ser a descrição do que foi atualizado no módulo Cidadão)
+  cd Cidadao ; clasp push ; clasp deploy --deploymentId AKfycbzUiUkAP9XQ3gCo0vOHswNt78jV-SJpx_RulNzgDh6G680XTx8VEA52VA_CdyDd86erGg --description "<<comentário>>" (<<comentário>> deve ser a descrição do que foi atualizado no módulo Cidadão) ; cd..
 
 - Comando: dpl-email
 - Ação: Realiza push e deploy do módulo Email no Apps Script.
 - Sequência de comandos:
-  - cd Email
+  cd Email ; clasp push ; clasp deploy --deploymentId AKfycbzVUDExZbAyLYVQ-8CAbAg3JjKA3cQ1NVv60P3-c9F2HC8Gtvkr4wb1uxjgrf65NZF7 --description "<<comentário>>" (<<comentário>> deve ser a descrição do que foi atualizado no módulo Email) ; cd..
+
+- Comando: dpl-all
+- Ação: Realiza commit, push e deploy de todos os módulos (Atendimento, Cidadao e Email) em sequência.
+- Sequência de comandos:
+  - git add .
+  - git commit -m "<<comentário>>" (<<comentário>> deve ser a descrição do que foi atualizado no sistema)
+  - git push
+  - cd Atendimento
   - clasp push
-  - clasp deploy --deploymentId AKfycbxvkce95ZEE84wqed5ltl1ZgkHyt4CGyPzMiq-zHJfXkHyL01X70xWU0Ot14scMd3sW --description "Deploy automático do Email"
+  - clasp deploy --deploymentId AKfycbyjHfu_JThCljCgGYNOMn38cO4OwBNcBgEiWlQnMMLV29uao5FSsSTXUr-kc1B8ed9j --description "<<comentário>>"
+  - cd ../Cidadao
+  - clasp push
+  - clasp deploy --deploymentId AKfycbzUiUkAP9XQ3gCo0vOHswNt78jV-SJpx_RulNzgDh6G680XTx8VEA52VA_CdyDd86erGg --description "<<comentário>>"
+  - cd ../Email
+  - clasp push
+  - clasp deploy --deploymentId AKfycbzVUDExZbAyLYVQ-8CAbAg3JjKA3cQ1NVv60P3-c9F2HC8Gtvkr4wb1uxjgrf65NZF7 --description "<<comentário>>"
+  - cd ..
 
