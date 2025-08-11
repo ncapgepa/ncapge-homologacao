@@ -336,6 +336,28 @@ function generateProtocolPdf(protocolo) {
   if (dados.erro) {
     throw new Error('Não foi possível gerar o PDF: ' + dados.erro);
   }
+  // Busca arquivos enviados para a pasta do drive
+  let documentosHtml = '';
+  let imagensHtml = '';
+  if (dados.linkDocumentos) {
+    try {
+      const folderId = dados.linkDocumentos.match(/[-\w]{25,}/);
+      if (folderId) {
+        const folder = DriveApp.getFolderById(folderId[0]);
+        const files = folder.getFiles();
+        while (files.hasNext()) {
+          const file = files.next();
+          const mimeType = file.getMimeType();
+          if (mimeType.startsWith('image/')) {
+            const base64 = Utilities.base64Encode(file.getBlob().getBytes());
+            imagensHtml += `<div style="page-break-before: always; text-align:center;"><img src='data:${mimeType};base64,${base64}' style='max-width:90vw; max-height:90vh; margin: 30px auto; display:block;'/><p style='font-size:12px; color:#555;'>${file.getName()}</p></div>`;
+          }
+        }
+      }
+    } catch (e) {
+      imagensHtml = `<h3>Documentos Enviados</h3><p>Não foi possível listar as imagens: ${e.message}</p>`;
+    }
+  }
   const htmlContent = `
     <html>
       <head>
@@ -365,13 +387,6 @@ function generateProtocolPdf(protocolo) {
           <tr><th>Tipo Documento do Representante</th><td>${dados.tipoDocumentoRepresentante || ''}</td></tr>
           <tr><th>Número do Documento do Representante</th><td>${dados.numeroDocumentoRepresentante || ''}</td></tr>
         </table>
-        ${(dados.tipoRepresentante || dados.tipoDocumentoRepresentante || dados.numeroDocumentoRepresentante) ? `
-        <h3>Dados do Representante</h3>
-        <table>
-          <tr><th>Tipo de Representante</th><td>${dados.tipoRepresentante || ''}</td></tr>
-          <tr><th>Tipo de Documento do Representante</th><td>${dados.tipoDocumentoRepresentante || ''}</td></tr>
-          <tr><th>Número do Documento do Representante</th><td>${dados.numeroDocumentoRepresentante || ''}</td></tr>
-        </table>` : ''}
         <h3>Dados do Pedido</h3>
         <table>
           <tr><th>Data da Solicitação</th><td>${dados.data}</td></tr>
@@ -384,6 +399,7 @@ function generateProtocolPdf(protocolo) {
         <p style="text-align:center; color:#777; font-size:9px; margin-top: 30px;">
           Documento gerado pelo SisNCA em ${new Date().toLocaleString()}
         </p>
+        ${imagensHtml}
       </body>
     </html>
   `;

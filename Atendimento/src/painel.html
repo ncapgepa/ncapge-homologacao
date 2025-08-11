@@ -232,24 +232,6 @@
                 </div>
               </div>
             </fieldset>
-            ${(dados.tipoRepresentante || dados.tipoDocumentoRepresentante || dados.numeroDocumentoRepresentante) ? `
-            <fieldset style="border:1px solid #b2dfdb; border-radius:6px; margin-bottom:20px; padding:18px;">
-              <legend style="font-weight:bold;color:#00796b;">Dados do Representante</legend>
-              <div class="form-grid">
-                <div>
-                  <label>Tipo de Representante</label>
-                  <input type="text" id="edit-tipo-representante" value="${dados.tipoRepresentante || ''}" readonly>
-                </div>
-                <div>
-                  <label>Tipo de Documento do Representante</label>
-                  <input type="text" id="edit-tipo-doc-representante" value="${dados.tipoDocumentoRepresentante || ''}" readonly>
-                </div>
-                <div>
-                  <label>Número do Documento do Representante</label>
-                  <input type="text" id="edit-num-doc-representante" value="${dados.numeroDocumentoRepresentante || ''}" readonly>
-                </div>
-              </div>
-            </fieldset>` : ''}
             <label for="edit-cdas">CDAs (separadas por vírgula)</label>
             <textarea id="edit-cdas" rows="3">${dados.cdas}</textarea>
             <p style="margin-top:15px;"><b>Documentos:</b> <a href="${dados.linkDocumentos}" target="_blank" rel="noopener noreferrer">Abrir Pasta de Documentos</a></p>
