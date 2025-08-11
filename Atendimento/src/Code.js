@@ -339,6 +339,7 @@ function generateProtocolPdf(protocolo) {
   // Busca arquivos enviados para a pasta do drive
   let documentosHtml = '';
   let imagensHtml = '';
+  let pdfsHtml = '';
   if (dados.linkDocumentos) {
     try {
       const folderId = dados.linkDocumentos.match(/[-\w]{25,}/);
@@ -351,11 +352,19 @@ function generateProtocolPdf(protocolo) {
           if (mimeType.startsWith('image/')) {
             const base64 = Utilities.base64Encode(file.getBlob().getBytes());
             imagensHtml += `<div style="page-break-before: always; text-align:center;"><img src='data:${mimeType};base64,${base64}' style='max-width:90vw; max-height:90vh; margin: 30px auto; display:block;'/><p style='font-size:12px; color:#555;'>${file.getName()}</p></div>`;
+          } else if (mimeType === MimeType.PDF) {
+            // Gera link para download do PDF
+            const url = file.getUrl();
+            pdfsHtml += `<div style="page-break-before: always; text-align:center;">
+              <h3>Documento PDF Anexado</h3>
+              <p><strong>${file.getName()}</strong></p>
+              <a href="${url}" target="_blank" style="display:inline-block;padding:10px 18px;background:#1976d2;color:#fff;text-decoration:none;border-radius:4px;font-weight:bold;">Abrir/Download</a>
+            </div>`;
           }
         }
       }
     } catch (e) {
-      imagensHtml = `<h3>Documentos Enviados</h3><p>Não foi possível listar as imagens: ${e.message}</p>`;
+      imagensHtml = `<h3>Documentos Enviados</h3><p>Não foi possível listar os arquivos: ${e.message}</p>`;
     }
   }
   const htmlContent = `
@@ -400,6 +409,7 @@ function generateProtocolPdf(protocolo) {
           Documento gerado pelo SisNCA em ${new Date().toLocaleString()}
         </p>
         ${imagensHtml}
+        ${pdfsHtml}
       </body>
     </html>
   `;

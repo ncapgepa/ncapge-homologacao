@@ -3,6 +3,9 @@ const SHEET_ID = '1k0ytrIaumadc4Dfp29i5KSdqG93RR2GXMMwBd96jXdQ';
 const REQUESTS_SHEET_NAME = 'Pedidos Prescrição';
 const DRIVE_FOLDER_NAME = 'Documentos prescricao (homologacao)';
 
+// URL base para consulta do protocolo (ajuste conforme o ambiente)
+const CONSULTA_URL_BASE = 'https://script.google.com/macros/s/AKfycbzVUDExZbAyLYVQ-8CAbAg3JjKA3cQ1NVv60P3-c9F2HC8Gtvkr4wb1uxjgrf65NZF7';
+
 /**
  * Função principal que serve as páginas públicas.
  */
@@ -165,7 +168,7 @@ function findDuplicateCDAs(sheet, cdasToCheck) {
 function sendConfirmationEmail(protocolo, destinatario, nome) {
   const assunto = `Confirmação de Recebimento - Protocolo ${protocolo}`;
   // Adiciona o protocolo como parâmetro na URL
-  const consultaUrl = `https://script.google.com/macros/s/AKfycbzVUDExZbAyLYVQ-8CAbAg3JjKA3cQ1NVv60P3-c9F2HC8Gtvkr4wb1uxjgrf65NZF7/exec?page=consulta&protocolo=${encodeURIComponent(protocolo)}`;
+  const consultaUrl = `${CONSULTA_URL_BASE}/exec?page=consulta&protocolo=${encodeURIComponent(protocolo)}`;
   const corpo = `
     <p>Prezado(a) ${nome},</p>
     <p>A sua solicitação de Análise de Prescrição de Dívida Ativa foi recebida com sucesso.</p>
