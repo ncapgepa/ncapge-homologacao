@@ -1,3 +1,5 @@
+// Ambiente do sistema: altere para 'producao' ao publicar em produção
+const ENVIRONMENT = 'homologacao';
 const SHEET_ID = '1k0ytrIaumadc4Dfp29i5KSdqG93RR2GXMMwBd96jXdQ';
 const REQUESTS_SHEET_NAME = 'Pedidos Prescrição';
 const ACCESS_SHEET_NAME = 'Acessos';
@@ -18,6 +20,7 @@ function doGet(e) {
     template.userName = accessInfo.nome;
     template.userEmail = accessInfo.email;
     template.userRole = accessInfo.role;
+    template.environment = ENVIRONMENT;
     return template.evaluate().setTitle('Painel do Atendente');
   } else {
     return HtmlService.createHtmlOutput(
