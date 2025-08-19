@@ -69,6 +69,8 @@
   <div class="container">
     <div class="user-info">
       Logado como: <strong><?!= userName ?></strong> (<?!= userEmail ?> | Função: <?!= userRole ?>)
+      &nbsp;|&nbsp;
+  <a href="https://script.google.com/macros/s/AKfycbyjHfu_JThCljCgGYNOMn38cO4OwBNcBgEiWlQnMMLV29uao5FSsSTXUr-kc1B8ed9j/exec?page=sistema" target="_blank" style="color:#00796b;text-decoration:underline;font-weight:500;">Visão Geral do Sistema</a>
     </div>
     <h1>Painel do Atendente</h1>
     <div id="filters">
@@ -96,7 +98,7 @@
       <p><strong id="results-count"></strong></p>
       <table id="tabela-solicitacoes">
         <thead>
-          <tr><th>Protocolo</th><th>Data</th><th>Nome</th><th>Status</th><th>Ações</th></tr>
+          <tr><th>Protocolo</th><th>Data</th><th>Nome do Titular</th><th>Status</th><th>Ações</th></tr>
         </thead>
         <tbody>
           <!-- As linhas da tabela serão inseridas aqui pelo JavaScript -->

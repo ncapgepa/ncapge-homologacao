@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visão Geral Interativa do SisNCA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony -->
+    <!-- Application Structure Plan: A single-page, scrolling application with a fixed top navigation bar for quick jumps. The structure is thematic: 1. Hero/Introduction, 2. Interactive Workflow Diagram, 3. Tabbed Module Details, 4. Summary. This structure was chosen to transform the static report into an exploratory journey. The interactive workflow provides an immediate high-level understanding, while the tabs allow for a deep dive into specific modules without overwhelming the user. This prioritizes user-guided discovery over a linear text presentation. -->
+    <!-- Visualization & Content Choices: Report Info: System workflow -> Goal: Organize/Explain Process -> Viz/Presentation: Interactive HTML/CSS Flowchart -> Interaction: Click on a step to highlight it and display its description below. -> Justification: A visual, interactive diagram is far more effective for understanding a process than static text. Report Info: Module Features -> Goal: Inform/Detail -> Viz/Presentation: Tabbed interface with feature cards -> Interaction: Click tabs to switch between modules. -> Justification: Tabs organize a large amount of detailed information cleanly, allowing users to focus on one area at a time. Library/Method: Vanilla JS for all interactions. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F7F4;
+            color: #3D405B;
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+        }
+        .nav-link:hover {
+            color: #81B29A;
+        }
+        .nav-link.active {
+            color: #81B29A;
+            border-bottom: 2px solid #81B29A;
+        }
+        .tab-button {
+            transition: all 0.3s;
+        }
+        .tab-button.active {
+            background-color: #81B29A;
+            color: #FFFFFF;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .flow-step {
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+        }
+        .flow-step.active, .flow-step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-color: #81B29A;
+        }
+        .flow-arrow {
+            font-size: 2rem;
+            color: #E07A5F;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-[#3D405B]">SisNCA</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="#overview" class="nav-link text-gray-600 pb-1">Visão Geral</a>
+                <a href="#workflow" class="nav-link text-gray-600 pb-1">Como Funciona</a>
+                <a href="#modules" class="nav-link text-gray-600 pb-1">Módulos</a>
+                <a href="#summary" class="nav-link text-gray-600 pb-1">Resumo</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="overview" class="py-20 md:py-32 bg-white">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4 text-[#3D405B]">Sistema de Gestão de Prescrição de Dívida Ativa</h2>
+                <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
+                    Uma solução integrada para otimizar o envio, acompanhamento e processamento de solicitações, garantindo um fluxo de trabalho com mais rastreabilidade, transparência e agilidade para todos os envolvidos.
+                </p>
+            </div>
+        </section>
+
+        <section id="workflow" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h3 class="text-3xl font-bold mb-2">Como o Sistema Funciona</h3>
+                    <p class="text-gray-600 max-w-2xl mx-auto">O SisNCA conecta o cidadão, o sistema e os atendentes em um fluxo único e auditável. Clique em cada etapa para ver os detalhes.</p>
+                </div>
+                
+                <div class="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 mb-8 overflow-x-auto pb-4">
+                    <div class="flow-step text-center p-6 bg-white rounded-lg shadow-md border-2 border-transparent w-64 h-48 flex flex-col justify-center items-center" data-step="1">
+                        <span class="text-3xl mb-2">👤</span>
+                        <h4 class="font-semibold">Cidadão Inicia</h4>
+                        <p class="text-sm text-gray-500">Envio de pedido e documentos.</p>
+                    </div>
+                    <div class="flow-arrow hidden md:block">&rarr;</div>
+                    <div class="flow-step text-center p-6 bg-white rounded-lg shadow-md border-2 border-transparent w-64 h-48 flex flex-col justify-center items-center" data-step="2">
+                        <span class="text-3xl mb-2">⚙️</span>
+                        <h4 class="font-semibold">SisNCA Processa</h4>
+                        <p class="text-sm text-gray-500">Valida, organiza e notifica.</p>
+                    </div>
+                    <div class="flow-arrow hidden md:block">&rarr;</div>
+                    <div class="flow-step text-center p-6 bg-white rounded-lg shadow-md border-2 border-transparent w-64 h-48 flex flex-col justify-center items-center" data-step="3">
+                        <span class="text-3xl mb-2">👩‍💼</span>
+                        <h4 class="font-semibold">Atendente Analisa</h4>
+                        <p class="text-sm text-gray-500">Consulta, atualiza e finaliza.</p>
+                    </div>
+                </div>
+
+                <div id="workflow-details" class="mt-8 p-8 bg-white rounded-lg shadow-lg min-h-[150px] transition-all duration-300">
+                    <p class="text-gray-600 text-center">Selecione uma etapa do fluxo acima para ver a descrição detalhada aqui.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="modules" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h3 class="text-3xl font-bold mb-2">Explore os Módulos do Sistema</h3>
+                    <p class="text-gray-600 max-w-2xl mx-auto">Cada módulo possui funcionalidades específicas para atender às necessidades de cada perfil de usuário, desde o cidadão até o administrador.</p>
+                </div>
+
+                <div class="flex justify-center mb-8 border-b">
+                    <button class="tab-button py-3 px-6 font-semibold text-gray-600" data-tab="cidadao">Cidadão</button>
+                    <button class="tab-button py-3 px-6 font-semibold text-gray-600" data-tab="email">Email</button>
+                    <button class="tab-button py-3 px-6 font-semibold text-gray-600" data-tab="atendimento">Atendimento</button>
+                </div>
+
+                <div id="cidadao" class="tab-content">
+                    <p class="text-center text-gray-600 mb-8">Interface direta para o solicitante realizar e acompanhar seu pedido com facilidade.</p>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="bg-[#F8F7F4] p-6 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2">Formulário Online</h4>
+                            <p class="text-gray-600">Permite o preenchimento e envio do pedido de prescrição de forma eletrônica e intuitiva.</p>
+                        </div>
+                        <div class="bg-[#F8F7F4] p-6 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2">Envio de Documentos</h4>
+                            <p class="text-gray-600">Anexa arquivos comprobatórios que são organizados automaticamente no Google Drive.</p>
+                        </div>
+                        <div class="bg-[#F8F7F4] p-6 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2">Identificação Automática</h4>
+                            <p class="text-gray-600">Diferencia o titular do representante, ajustando os campos do formulário.</p>
+                        </div>
+                        <div class="bg-[#F8F7F4] p-6 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2">Confirmação por E-mail</h4>
+                            <p class="text-gray-600">Envia um protocolo e link de acompanhamento assim que o pedido é submetido.</p>
+                        </div>
+                        <div class="bg-[#F8F7F4] p-6 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2">Validação de Dados</h4>
+                            <p class="text-gray-600">Garante que todos os campos obrigatórios sejam preenchidos corretamente.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="email" class="tab-content">
+                    <p class="text-center text-gray-600 mb-8">Módulo de comunicação que gerencia todas as notificações automáticas do sistema.</p>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="bg-[#F8F7F4] p-6 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2">Fila de E-mails</h4>
+                            <p class="text-gray-600">Gerencia o fluxo de envio de confirmações e notificações de andamento.</p>
+                        </div>
+                        <div class="bg-[#F8F7F4] p-6 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2">Envio Automático</h4>
+                            <p class="text-gray-600">Dispara e-mails para cidadãos e atendentes sobre atualizações no protocolo.</p>
+                        </div>
+                        <div class="bg-[#F8F7F4] p-6 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2">Personalização</h4>
+                            <p class="text-gray-600">Inclui informações relevantes como protocolo, nome, status e links nos e-mails.</p>
+                        </div>
+                        <div class="bg-[#F8F7F4] p-6 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2">Logs de Envio</h4>
+                            <p class="text-gray-600">Mantém um registro detalhado de todos os e-mails enviados para fins de auditoria.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="atendimento" class="tab-content">
+                    <p class="text-center text-gray-600 mb-8">Ferramenta central para a equipe interna gerenciar, analisar e processar todas as solicitações.</p>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="bg-[#F8F7F4] p-6 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2">Painel do Atendente</h4>
+                            <p class="text-gray-600">Visão consolidada de todos os protocolos com status, data e nome do titular.</p>
+                        </div>
+                        <div class="bg-[#F8F7F4] p-6 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2">Filtros e Pesquisa</h4>
+                            <p class="text-gray-600">Facilita a localização de pedidos por protocolo, nome do titular ou status.</p>
+                        </div>
+                        <div class="bg-[#F8F7F4] p-6 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2">Visualização Detalhada</h4>
+                            <p class="text-gray-600">Acesso a todos os dados do protocolo, documentos, histórico e CDAs.</p>
+                        </div>
+                        <div class="bg-[#F8F7F4] p-6 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2">Gestão de Andamento</h4>
+                            <p class="text-gray-600">Permite atualizar status, adicionar observações e informar o número do processo.</p>
+                        </div>
+                        <div class="bg-[#F8F7F4] p-6 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2">Exportação para PDF</h4>
+                            <p class="text-gray-600">Gera um relatório completo do protocolo, incluindo a lista de documentos anexados.</p>
+                        </div>
+                        <div class="bg-[#F8F7F4] p-6 rounded-lg">
+                            <h4 class="font-bold text-lg mb-2">Gestão de Usuários (Admin)</h4>
+                            <p class="text-gray-600">Administradores podem gerenciar a equipe de atendentes e suas permissões.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="summary" class="py-20">
+            <div class="container mx-auto px-6 text-center">
+                 <h3 class="text-3xl font-bold mb-4">Um Ecossistema Completo e Eficiente</h3>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                    Ao integrar o cidadão, a comunicação e o atendimento em um fluxo único, seguro e auditável, o SisNCA transforma o processo de prescrição de dívida ativa, tornando-o mais ágil, transparente e eficiente para todos.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p>&copy; Desenvolvido por DTIGD © 2025</p>
+            <p class="text-sm text-gray-400 mt-2">Visão Geral Interativa do Sistema</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const workflowSteps = {
+                '1': {
+                    title: 'Etapa 1: Cidadão Inicia o Processo',
+                    description: 'O cidadão ou seu representante legal acessa o portal e preenche o formulário online com os dados necessários. Durante esta etapa, é possível anexar todos os documentos comprobatórios, que são enviados de forma segura para uma pasta exclusiva no Google Drive. Após a submissão, um e-mail de confirmação com o número do protocolo é enviado instantaneamente.'
+                },
+                '2': {
+                    title: 'Etapa 2: SisNCA Automatiza e Organiza',
+                    description: 'O sistema recebe a solicitação, valida os dados para garantir a integridade das informações e cria um novo protocolo. Automaticamente, notifica o cidadão sobre o recebimento e adiciona o novo pedido ao painel dos atendentes. Os documentos são mantidos organizados e vinculados ao protocolo para fácil acesso.'
+                },
+                '3': {
+                    title: 'Etapa 3: Atendente Gerencia e Finaliza',
+                    description: 'A equipe de atendimento visualiza o novo protocolo em seu painel. Eles podem filtrar e pesquisar por solicitações, ver todos os detalhes, acessar os documentos no Google Drive com um clique, e atualizar o status do processo. Cada alteração gera um registro no histórico e pode disparar notificações por e-mail, mantendo o cidadão informado até a conclusão do pedido.'
+                }
+            };
+            
+            const flowSteps = document.querySelectorAll('.flow-step');
+            const detailsContainer = document.getElementById('workflow-details');
+            
+            flowSteps.forEach(step => {
+                step.addEventListener('click', () => {
+                    flowSteps.forEach(s => s.classList.remove('active'));
+                    step.classList.add('active');
+                    
+                    const stepData = workflowSteps[step.dataset.step];
+                    detailsContainer.innerHTML = `
+                        <h4 class="font-bold text-xl mb-2 text-center text-[#3D405B]">${stepData.title}</h4>
+                        <p class="text-gray-600 text-center">${stepData.description}</p>
+                    `;
+                });
+            });
+
+            const tabs = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            function activateTab(tabId) {
+                tabs.forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.tab === tabId);
+                });
+                tabContents.forEach(content => {
+                    content.classList.toggle('active', content.id === tabId);
+                });
+            }
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    activateTab(tab.dataset.tab);
+                });
+            });
+
+            activateTab('cidadao');
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('main section');
+
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.5
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            navLinks.forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -7,6 +7,10 @@ const EMAIL_QUEUE_SHEET_NAME = 'EmailQueue';
  * Função principal que serve o painel do atendente.
  */
 function doGet(e) {
+  // Se for solicitado ?page=sistema, serve o sistema.html sem exigir login
+  if (e && e.parameter && e.parameter.page === 'sistema') {
+    return HtmlService.createHtmlOutputFromFile('sistema').setTitle('Visão Geral do Sistema');
+  }
   const accessInfo = checkUserAccess();
   // Mostra sempre o email detectado, mesmo se não tiver acesso
   if (accessInfo.hasAccess) {
@@ -57,7 +61,7 @@ function getRequests() {
   return data.map(row => ({
     protocolo: row[0],
     data: row[1].toLocaleString(),
-    nome: row[2],
+    nome: row[13],
     status: row[8]
   }));
 }
@@ -386,7 +390,7 @@ function generateProtocolPdf(protocolo) {
           <tr><th>Nome do Titular da Dívida</th><td>${dados.nomeRepresentado || ''}</td></tr>
           <tr><th>CPF/CNPJ do Titular</th><td>${dados.cpfCnpjRepresentado || ''}</td></tr>
         </table>
-        <h3>Dados do Solicitante</h3>
+        <h3>Dados do Representante Legal</h3>
         <table>
           <tr><th>Nome</th><td>${dados.nome}</td></tr>
           <tr><th>E-mail</th><td>${dados.email}</td></tr>
