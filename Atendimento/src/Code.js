@@ -4,6 +4,7 @@ const SHEET_ID = '1k0ytrIaumadc4Dfp29i5KSdqG93RR2GXMMwBd96jXdQ';
 const REQUESTS_SHEET_NAME = 'Pedidos Prescrição';
 const ACCESS_SHEET_NAME = 'Acessos';
 const EMAIL_QUEUE_SHEET_NAME = 'EmailQueue';
+const emailSenderUrl = 'https://script.google.com/macros/s/AKfycbzVUDExZbAyLYVQ-8CAbAg3JjKA3cQ1NVv60P3-c9F2HC8Gtvkr4wb1uxjgrf65NZF7/exec';
 
 /**
  * Função principal que serve o painel do atendente.
@@ -16,12 +17,13 @@ function doGet(e) {
   const accessInfo = checkUserAccess();
   // Mostra sempre o email detectado, mesmo se não tiver acesso
   if (accessInfo.hasAccess) {
-    const template = HtmlService.createTemplateFromFile('painel');
-    template.userName = accessInfo.nome;
-    template.userEmail = accessInfo.email;
-    template.userRole = accessInfo.role;
-    template.environment = ENVIRONMENT;
-    return template.evaluate().setTitle('Painel do Atendente');
+  const template = HtmlService.createTemplateFromFile('painel');
+  template.userName = accessInfo.nome;
+  template.userEmail = accessInfo.email;
+  template.userRole = accessInfo.role;
+  template.environment = ENVIRONMENT;
+  template.emailSenderUrl = emailSenderUrl;
+  return template.evaluate().setTitle('Painel do Atendente');
   } else {
     return HtmlService.createHtmlOutput(
       '<h1>Acesso Negado</h1><p>O seu email (<strong>' + 

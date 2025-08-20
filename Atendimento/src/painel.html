@@ -117,7 +117,12 @@
           <!-- As linhas da tabela serão inseridas aqui pelo JavaScript -->
         </tbody>
       </table>
-      <div id="detalhes" style="display:none;"></div>
+      <!-- Modal de Detalhes -->
+      <div id="detalhes-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.35);z-index:1000;align-items:center;justify-content:center;">
+        <div id="detalhes" style="background:#fff;max-width:900px;width:95vw;max-height:90vh;overflow:auto;border-radius:10px;box-shadow:0 4px 24px #0003;padding:32px;position:relative;">
+          <button onclick="fecharDetalhes()" style="position:absolute;top:12px;right:18px;font-size:22px;background:none;border:none;color:#888;cursor:pointer;">&times;</button>
+        </div>
+      </div>
       <? if (userRole === 'admin') { ?>
         <div id="admin-panel">
           <div class="collapsible-header" onclick="toggleAdminPanel()">
@@ -184,18 +189,17 @@
         });
     }
     function verDetalhes(protocolo) {
-      // Exibe indicador de carregamento
+      var modal = document.getElementById('detalhes-modal');
       var detalhesDiv = document.getElementById('detalhes');
-      detalhesDiv.style.display = 'block';
+      modal.style.display = 'flex';
       detalhesDiv.innerHTML = '<div style="text-align:center;padding:30px 0;">Carregando detalhes... <span class="loader" style="display:inline-block;width:18px;height:18px;border:3px solid #00796b;border-top:3px solid #e0f2f1;border-radius:50%;animation:spin 1s linear infinite;vertical-align:middle;"></span></div>';
       google.script.run.withSuccessHandler(function(dados) {
         if (dados.erro) {
             alert(dados.erro);
+            fecharDetalhes();
             return;
         }
-        var div = document.getElementById('detalhes');
-        div.style.display = 'block';
-        div.innerHTML = `
+        detalhesDiv.innerHTML = `
           <form id="edit-form">
             <h2>Detalhes do Protocolo ${protocolo}</h2>
             <input type="hidden" id="edit-protocolo" value="${protocolo}">
@@ -204,11 +208,11 @@
               <div class="form-grid">
                 <div>
                   <label>Nome do Titular da Dívida</label>
-                  <input type="text" id="edit-nome-representado" value="${dados.nomeRepresentado || ''}" readonly>
+                  <input type="text" id="edit-nome-representado" value="${dados.nomeRepresentado || ''}">
                 </div>
                 <div>
                   <label>CPF/CNPJ do Titular</label>
-                  <input type="text" id="edit-cpf-cnpj-representado" value="${dados.cpfCnpjRepresentado || ''}" readonly>
+                  <input type="text" id="edit-cpf-cnpj-representado" value="${dados.cpfCnpjRepresentado || ''}">
                 </div>
               </div>
             </fieldset>
@@ -235,15 +239,15 @@
                 </div>
                 <div>
                   <label>Tipo de Representante</label>
-                  <input type="text" id="edit-tipo-representante" value="${dados.tipoRepresentante || ''}" readonly>
+                  <input type="text" id="edit-tipo-representante" value="${dados.tipoRepresentante || ''}">
                 </div>
                 <div>
                   <label>Tipo Documento do Representante</label>
-                  <input type="text" id="edit-tipo-doc-representante" value="${dados.tipoDocumentoRepresentante || ''}" readonly>
+                  <input type="text" id="edit-tipo-doc-representante" value="${dados.tipoDocumentoRepresentante || ''}">
                 </div>
                 <div>
                   <label>Número do Documento do Representante</label>
-                  <input type="text" id="edit-num-doc-representante" value="${dados.numeroDocumentoRepresentante || ''}" readonly>
+                  <input type="text" id="edit-num-doc-representante" value="${dados.numeroDocumentoRepresentante || ''}">
                 </div>
               </div>
             </fieldset>
@@ -266,15 +270,25 @@
               <button type="button" class="btn" onclick="salvarAlteracoes()">Salvar Todas as Alterações</button>
               <button type="button" class="btn btn-pdf" onclick="exportarPdf('${protocolo}')">Exportar para PDF</button>
             </div>
+            <div style="text-align:center;margin-top:24px;">
+              <button type="button" class="btn" style="background:#888;color:#fff;padding:12px 32px;font-size:1.1em;border-radius:6px;" onclick="fecharDetalhes()">Fechar</button>
+            </div>
           </form>
           <hr>
           <h3>Histórico</h3>
           <pre style="background:#eee;padding:10px;border-radius:3px;white-space: pre-wrap; word-wrap: break-word;">${dados.historico || 'Nenhum histórico registado.'}</pre>
           `;
+
         document.getElementById('edit-tipo').value = dados.tipo;
         document.getElementById('novo-status').value = dados.status;
-        div.scrollIntoView({ behavior: 'smooth' });
       }).consultarProtocoloCompleto(protocolo);
+    }
+
+    function fecharDetalhes() {
+      var modal = document.getElementById('detalhes-modal');
+      var detalhesDiv = document.getElementById('detalhes');
+      detalhesDiv.innerHTML = '';
+      modal.style.display = 'none';
     }
 
     function exportarPdf(protocolo) {
@@ -325,10 +339,10 @@
           btn.textContent = 'Salvar Todas as Alterações';
           alert('Alterações salvas com sucesso!');
           if (response && response.needsRedirect) {
-            const emailSenderUrl = 'https://script.google.com/macros/s/AKfycbyAfKdmWfuiqb6J_5sr5LkD78hGlsZe7mosjP3XbBrr3rbA_p467hMmB76sDnrc7EEhWg/exec';
+            const emailSenderUrl = "<?!= emailSenderUrl ?>";
             window.open(emailSenderUrl, '_blank', 'width=400,height=200,popup');
           }
-          document.getElementById('detalhes').style.display = 'none';
+          fecharDetalhes();
           carregarTabela(); 
         })
         .withFailureHandler(function(err) {
